@@ -17,10 +17,11 @@ import { MatInputModule } from '@angular/material/input';
 import { GameInfoComponent } from './game-info/game-info.component';
 import { MatCardModule } from '@angular/material/card';
 import { environment } from '../environments/environment';
+import {AngularFireModule} from '@angular/fire';
 
-// Add these imports:
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+
+// import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+// import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 @NgModule({
   declarations: [
@@ -42,9 +43,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
     FormsModule,
     MatInputModule,
     MatCardModule,
-    // Add these lines to connect to Firebase:
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore()),
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [],
   bootstrap: [AppComponent],
