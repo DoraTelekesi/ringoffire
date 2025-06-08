@@ -33,7 +33,7 @@ export class GameComponent implements OnInit {
   game!: Game;
   gameService!: GameService;
   gameId!: string;
-  gameOver=false;
+  gameOver = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,29 +65,28 @@ export class GameComponent implements OnInit {
   }
 
   takeCard() {
-    if(this.game.stack.length == 0){
-      this.gameOver=true;
-    }
-    else {
-    if (!this.game.pickCardAnimation) {
-      this.game.currentCard = this.game.stack.pop() || '';
-      // console.log(this.currentCard);
-      this.game.pickCardAnimation = true;
+    if (this.game.stack.length == 0) {
+      this.gameOver = true;
+    } else {
+      if (!this.game.pickCardAnimation) {
+        this.game.currentCard = this.game.stack.pop() || '';
+        // console.log(this.currentCard);
+        this.game.pickCardAnimation = true;
 
-      this.game.currentPlayer++;
-      this.game.currentPlayer =
-        this.game.currentPlayer % this.game.players.length;
-      this.updateGame();
-      // console.log('New card: ' + this.currentCard);
-      // console.log('Game is: ', this.game);
-    }
-    setTimeout(() => {
-      this.game.playedCards.push(this.game.currentCard);
-      this.game.pickCardAnimation = false;
-      this.updateGame();
-    }, 1000);
-    }
+        this.game.currentPlayer++;
+        this.game.currentPlayer =
+          this.game.currentPlayer % this.game.players.length;
 
+        this.updateGame();
+        // console.log('New card: ' + this.currentCard);
+        // console.log('Game is: ', this.game);
+      }
+      setTimeout(() => {
+        this.game.playedCards.push(this.game.currentCard);
+        this.game.pickCardAnimation = false;
+        this.updateGame();
+      }, 1000);
+    }
   }
 
   openDialog(): void {

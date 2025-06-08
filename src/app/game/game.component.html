@@ -18,7 +18,7 @@
 </div>
 
 <div class="gameOver" *ngIf="gameOver">
-  <img src ="assets/img/game-over.jpg" alt="" />
+  <img src="assets/img/game-over.jpg" alt="" />
 </div>
 <div
   *ngIf="!gameOver"
@@ -48,6 +48,7 @@
       src="assets/img/cards/{{ card }}.png"
       alt=""
     />
+
     <!-- Current card animation -->
     <img
       (click)="takeCard()"
@@ -74,5 +75,10 @@
   aria-label="Example icon button with a delete icon"
   (click)="openDialog()"
 >
+  <img
+    class="preloadImage"
+    src="assets/img/cards/{{ game.stack[game.stack.length - 1] }}.png"
+    alt=""
+  />
   <mat-icon>add</mat-icon>
 </button>
