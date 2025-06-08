@@ -2,7 +2,26 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
+import { GameService } from '../firebase-services/game.service';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
+// import { Firestore } from '@angular/fire/firestore';
+import { ActivatedRoute } from '@angular/router';
+
+import {
+  Firestore,
+  collectionData,
+  collection,
+  doc,
+  docData,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  orderBy,
+  where,
+  limit,
+} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-game',
@@ -13,17 +32,36 @@ export class GameComponent implements OnInit {
   pickCardAnimation = false;
   currentCard: string = '';
   game!: Game;
+  gameService!: GameService;
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    private route: ActivatedRoute,
+    public dialog: MatDialog,
+    private firestore: Firestore
+  ) {}
 
   ngOnInit(): void {
     this.newGame();
+    this.route.params.subscribe((params) => {
+      const gameId = params['id'];
+      const gameDoc = doc(this.firestore, `games/${gameId}`);
+      docData(gameDoc).subscribe((game: any) => {
+        this.game.currentPlayer = game.currentPlayer;
+        this.game.playedCards = game.playedCards;
+        this.game.players = game.players;
+        this.game.stack = game.stack;
+
+        // console.log('Single game from Firestore:', game);
+      });
+    });
   }
 
   newGame() {
     this.game = new Game();
-    console.log(this.game);
+    // const gamesCollection = collection(this.firestore, 'games');
+    // addDoc(gamesCollection, this.game.toJson());
   }
+
   takeCard() {
     if (!this.pickCardAnimation) {
       this.currentCard = this.game.stack.pop() || '';

@@ -21,6 +21,9 @@ import {
 })
 export class GameService {
   firestore = inject(Firestore);
+  
 
-  constructor() {}
+  constructor() {
+
+  }
 }
