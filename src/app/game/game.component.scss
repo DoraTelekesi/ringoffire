@@ -80,13 +80,30 @@
 
 .scroll-container {
     position:absolute;
+    display:flex;
     left:0;
     right:0;
     top:0;
-    display:flex;
     overflow-x: auto;
     overflow-y:hidden;
     >app-player-mobile{
         margin-left:8px;
+    }
+}
+
+app-player, app-player-mobile {
+    cursor:pointer;
+    &:hover{
+        filter:brightness(1.5);
+    }
+}
+
+.gameOver{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    img{
+        width:500px;
     }
 }

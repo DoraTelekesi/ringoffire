@@ -22,6 +22,7 @@ import {
   where,
   limit,
 } from '@angular/fire/firestore';
+import { EditPlayerComponent } from '../edit-player/edit-player.component';
 
 @Component({
   selector: 'app-game',
@@ -32,6 +33,7 @@ export class GameComponent implements OnInit {
   game!: Game;
   gameService!: GameService;
   gameId!: string;
+  gameOver=false;
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +48,7 @@ export class GameComponent implements OnInit {
       const gameDoc = doc(this.firestore, `games/${this.gameId}`);
       docData(gameDoc).subscribe((game: any) => {
         this.game.currentPlayer = game.currentPlayer;
+        this.game.players_images = game.players_images;
         this.game.playedCards = game.playedCards;
         this.game.players = game.players;
         this.game.stack = game.stack;
@@ -62,6 +65,10 @@ export class GameComponent implements OnInit {
   }
 
   takeCard() {
+    if(this.game.stack.length == 0){
+      this.gameOver=true;
+    }
+    else {
     if (!this.game.pickCardAnimation) {
       this.game.currentCard = this.game.stack.pop() || '';
       // console.log(this.currentCard);
@@ -79,6 +86,8 @@ export class GameComponent implements OnInit {
       this.game.pickCardAnimation = false;
       this.updateGame();
     }, 1000);
+    }
+
   }
 
   openDialog(): void {
@@ -87,10 +96,29 @@ export class GameComponent implements OnInit {
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
+        this.game.players_images.push('1.png');
         this.updateGame();
       }
     });
   }
+
+  editPlayer(playerId: number) {
+    const dialogRef = this.dialog.open(EditPlayerComponent);
+    console.log('Edit', playerId);
+
+    dialogRef.afterClosed().subscribe((change: string) => {
+      if (change) {
+        if (change == 'DELETE') {
+          this.game.players_images.splice(playerId, 1);
+          this.game.players.splice(playerId, 1);
+        } else {
+          this.game.players_images[playerId] = change;
+        }
+        this.updateGame();
+      }
+    });
+  }
+
   async updateGame() {
     const gameDoc = doc(this.firestore, `games/${this.gameId}`);
     await updateDoc(gameDoc, this.game.toJson());
