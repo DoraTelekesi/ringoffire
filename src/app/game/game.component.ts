@@ -33,6 +33,7 @@ export class GameComponent implements OnInit {
   currentCard: string = '';
   game!: Game;
   gameService!: GameService;
+  gameId!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,8 +44,8 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     this.newGame();
     this.route.params.subscribe((params) => {
-      const gameId = params['id'];
-      const gameDoc = doc(this.firestore, `games/${gameId}`);
+      this.gameId = params['id'];
+      const gameDoc = doc(this.firestore, `games/${this.gameId}`);
       docData(gameDoc).subscribe((game: any) => {
         this.game.currentPlayer = game.currentPlayer;
         this.game.playedCards = game.playedCards;
@@ -58,15 +59,14 @@ export class GameComponent implements OnInit {
 
   newGame() {
     this.game = new Game();
-    // const gamesCollection = collection(this.firestore, 'games');
-    // addDoc(gamesCollection, this.game.toJson());
   }
 
   takeCard() {
     if (!this.pickCardAnimation) {
       this.currentCard = this.game.stack.pop() || '';
-      console.log(this.currentCard);
+      // console.log(this.currentCard);
       this.pickCardAnimation = true;
+      this.updateGame();
       this.game.currentPlayer++;
       this.game.currentPlayer =
         this.game.currentPlayer % this.game.players.length;
@@ -76,6 +76,7 @@ export class GameComponent implements OnInit {
     setTimeout(() => {
       this.game.playedCards.push(this.currentCard);
       this.pickCardAnimation = false;
+      this.updateGame();
     }, 1000);
   }
 
@@ -85,7 +86,12 @@ export class GameComponent implements OnInit {
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
+        this.updateGame();
       }
     });
+  }
+  async updateGame() {
+    const gameDoc = doc(this.firestore, `games/${this.gameId}`);
+    await updateDoc(gameDoc, this.game.toJson());
   }
 }
