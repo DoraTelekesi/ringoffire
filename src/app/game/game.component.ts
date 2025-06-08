@@ -29,8 +29,6 @@ import {
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
-  pickCardAnimation = false;
-  currentCard: string = '';
   game!: Game;
   gameService!: GameService;
   gameId!: string;
@@ -51,6 +49,8 @@ export class GameComponent implements OnInit {
         this.game.playedCards = game.playedCards;
         this.game.players = game.players;
         this.game.stack = game.stack;
+        this.game.currentCard = game.currentCard;
+        this.game.pickCardAnimation = game.pickCardAnimation;
 
         // console.log('Single game from Firestore:', game);
       });
@@ -62,20 +62,21 @@ export class GameComponent implements OnInit {
   }
 
   takeCard() {
-    if (!this.pickCardAnimation) {
-      this.currentCard = this.game.stack.pop() || '';
+    if (!this.game.pickCardAnimation) {
+      this.game.currentCard = this.game.stack.pop() || '';
       // console.log(this.currentCard);
-      this.pickCardAnimation = true;
-      this.updateGame();
+      this.game.pickCardAnimation = true;
+
       this.game.currentPlayer++;
       this.game.currentPlayer =
         this.game.currentPlayer % this.game.players.length;
+      this.updateGame();
       // console.log('New card: ' + this.currentCard);
       // console.log('Game is: ', this.game);
     }
     setTimeout(() => {
-      this.game.playedCards.push(this.currentCard);
-      this.pickCardAnimation = false;
+      this.game.playedCards.push(this.game.currentCard);
+      this.game.pickCardAnimation = false;
       this.updateGame();
     }, 1000);
   }
